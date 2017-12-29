@@ -8,9 +8,9 @@ namespace Visualisateur.User
 {
     class User
     {
-        string Pseudo;
-        string Name;
-        string Path;
+        string pseudo;
+        string name;
+        string path;
 
         public User()
         {
@@ -19,10 +19,24 @@ namespace Visualisateur.User
 
         public User(string p, string pa, string n)
         {
-            Pseudo = p;
-            Name = n;
-            Path = pa;
+            pseudo = p;
+            name = n;
+            path = pa;
         }
 
+        public string GetPseudo()
+        {
+            return pseudo;
+        }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public string GetPath()
+        {
+            return path;
+        }
     }
 }

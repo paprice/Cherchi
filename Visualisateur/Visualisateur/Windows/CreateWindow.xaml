@@ -8,7 +8,7 @@
         Title="CreateWindow" Height="300" Width="300">
     <Grid>
         <Button x:Name="Btn_Create" Content="Créer" HorizontalAlignment="Center" Height="25" Margin="0,200,0,0" VerticalAlignment="Top" Width="175" Click="Btn_Create_Click"/>
-        <TextBox x:Name="Txt_Name" HorizontalAlignment="Center" Height="25" Margin="60,65,57,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
+        <TextBox x:Name="Txt_Name" HorizontalAlignment="Center" Height="25" Margin="0,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
         <Label x:Name="label" Content="Entre le nom complet de l'utilisateur : " HorizontalAlignment="Center" Height="25" Margin="0,35,0,0" VerticalAlignment="Top" Width="210"/>
         <TextBox x:Name="Txt_Pseudo" HorizontalAlignment="Center" Height="25" Margin="0,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
         <Label x:Name="label_Copy" Content="Entrer le pseudonyme de l'utilisateur : " HorizontalAlignment="Center" Height="25" Margin="0,95,0,0" VerticalAlignment="Top" Width="210"/>
