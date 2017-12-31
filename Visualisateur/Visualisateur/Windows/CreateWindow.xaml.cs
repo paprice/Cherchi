@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml;
@@ -21,18 +22,21 @@ namespace Visualisateur.Windows
             string path = @".\\users\\users.xml";
 
             List<User.User> list = ReadXml(path);
-            User.User us = new User.User(Txt_Pseudo.GetLineText(0), @".\\users\\" + Txt_Pseudo.GetLineText(0) + ".xml", Txt_Name.GetLineText(0));
+            User.User us = new User.User(Txt_Pseudo.Text, @".\\users\\" + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
 
             if (SinglePseudo(list,us.GetPseudo()))
             {
                 list.Add(us);
                 WriteXml(path, list);
+                this.Close();
             }
             else
             {
                 MessageBox.Show("Pseudonyme déjà utilisé", "Pseudonymne", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Txt_Pseudo.Text = "";
+                Txt_Name.Text = "";
+
             }
-            this.Close();
 
         }
 
@@ -86,6 +90,7 @@ namespace Visualisateur.Windows
             }
             catch (Exception ex)
             {
+                Console.Out.Write(ex);
                 doc.AppendChild(doc.CreateElement("users"));
 
                 doc.Save(path);

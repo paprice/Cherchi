@@ -2,10 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Visualisateur.Windows"
         mc:Ignorable="d"
-        Title="CreateWindow" Height="300" Width="300">
+        Title="Création d'utilisateur" Height="300" Width="300">
     <Grid>
         <Button x:Name="Btn_Create" Content="Créer" HorizontalAlignment="Center" Height="25" Margin="0,200,0,0" VerticalAlignment="Top" Width="175" Click="Btn_Create_Click"/>
         <TextBox x:Name="Txt_Name" HorizontalAlignment="Center" Height="25" Margin="0,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175"/>
