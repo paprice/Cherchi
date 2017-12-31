@@ -4,8 +4,9 @@
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         Title="Connexion" Height="350" Width="525">
     <Grid>
-        <Button x:Name="btn_create" Content="Créer" HorizontalAlignment="Left" Height="21" Margin="50,264,0,0" VerticalAlignment="Top" Width="105" Click="Btn_create_Click"/>
-        <Button x:Name="btn_delete" Content="Supprimer" HorizontalAlignment="Left" Height="21" Margin="350,264,0,0" VerticalAlignment="Top" Width="105"/>
+        <Button x:Name="btn_create" Content="Créer" HorizontalAlignment="Left" Height="21" Margin="50,265,0,0" VerticalAlignment="Top" Width="105" Click="Btn_create_Click"/>
+        <Button x:Name="btn_delete" Content="Supprimer" HorizontalAlignment="Left" Height="21" Margin="175,265,0,0" VerticalAlignment="Top" Width="105" Click="Btn_delete_Click"/>
+        <Button x:Name="btn_connexion" Content="Connexion" HorizontalAlignment="Left" Height="21" Margin="375,265,0,0" VerticalAlignment="Top" Width="105" Click="Btn_connexion_Click"/>
         <Grid Name ="usersGrid" HorizontalAlignment="Left" Height="249" Margin="10,10,0,0" VerticalAlignment="Top" Width="497">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -16,8 +17,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
         </Grid>
+       
     </Grid>
 </Window>

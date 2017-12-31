@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml;
-using Visualisateur.User;
+using Visualisateur.Other;
 
 namespace Visualisateur.Windows
 {
@@ -22,10 +22,10 @@ namespace Visualisateur.Windows
 
         private void Btn_Create_Click(object sender, RoutedEventArgs e)
         {
-            List<User.User> list = ReadXmlUser();
-            User.User us = new User.User(Txt_Pseudo.Text, @".\\users\\" + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
+            List<User> list = ReadXmlUser();
+            User us = new User(Txt_Pseudo.Text, @".\\users\\" + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
 
-            if (SinglePseudo(list,us.Pseudo))
+            if (SinglePseudo(list, us.Pseudo))
             {
                 list.Add(us);
                 WriteXmlUser(list);
@@ -41,9 +41,9 @@ namespace Visualisateur.Windows
 
         }
 
-        private bool SinglePseudo(List<User.User> list, string pseudo)
+        private bool SinglePseudo(List<User> list, string pseudo)
         {
-            foreach (User.User u in list)
+            foreach (User u in list)
             {
                 if (u.Pseudo == pseudo)
                 {
@@ -53,13 +53,13 @@ namespace Visualisateur.Windows
             return true;
         }
 
-        private void WriteXmlUser( List<User.User> list)
+        public void WriteXmlUser(List<User> list)
         {
             XmlDocument doc = new XmlDocument();
             XmlNode rootNode = doc.CreateElement("users");
             doc.AppendChild(rootNode);
 
-            foreach (User.User u in list)
+            foreach (User u in list)
             {
                 XmlNode user = doc.CreateElement("user");
                 rootNode.AppendChild(user);
@@ -81,9 +81,9 @@ namespace Visualisateur.Windows
 
         }
 
-        public List<User.User> ReadXmlUser()
+        public List<User> ReadXmlUser()
         {
-            List<User.User> list = new List<User.User>();
+            List<User> list = new List<User>();
             XmlDocument doc = new XmlDocument();
             try
             {
@@ -97,16 +97,26 @@ namespace Visualisateur.Windows
                 doc.Save(path);
             }
 
-            foreach (XmlNode n in doc.DocumentElement.ChildNodes)
+            foreach (XmlNode us in doc.FirstChild)
             {
-                string pseudo = n.SelectSingleNode("/users/user/pseudo").InnerText;
-                string pathName = n.SelectSingleNode("/users/user/path").InnerText;
-                string name = n.SelectSingleNode("/users/user/name").InnerText;
-
-                User.User u = new User.User(pseudo, pathName, name);
+                User u = new User();
+                foreach (XmlNode n in us)
+                {
+                    switch (n.Name)
+                    {
+                        case "pseudo":
+                            u.Pseudo = n.InnerText;
+                            break;
+                        case "name":
+                            u.Name = n.InnerText;
+                            break;
+                        case "path":
+                            u.Path = n.InnerText;
+                            break;
+                    }
+                }
                 list.Add(u);
             }
-
             return list;
         }
 

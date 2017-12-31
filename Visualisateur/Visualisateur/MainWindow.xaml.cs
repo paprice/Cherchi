@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Visualisateur.Windows;
+using Visualisateur.Other;
 
 namespace Visualisateur
 {
@@ -16,10 +17,14 @@ namespace Visualisateur
         private string path = @".\\users\\";
         private CreateWindow cw;
 
+        private User currentUser;
+
+        private List<User> users;
+
 
         public MainWindow()
         {
-            cw = new Windows.CreateWindow(path);
+            cw = new CreateWindow(path);
             InitializeComponent();
             CreateDirectory();
             CreateButton();
@@ -47,7 +52,7 @@ namespace Visualisateur
 
         private void Btn_create_Click(object sender, RoutedEventArgs e)
         {
-            cw.Show();
+            cw.ShowDialog();
 
             CreateButton();
 
@@ -55,10 +60,12 @@ namespace Visualisateur
 
         private void CreateButton()
         {
-            List<User.User> users = cw.ReadXmlUser();
+            usersGrid.Children.RemoveRange(0, usersGrid.Children.Capacity);
+
+            users = cw.ReadXmlUser();
             int count = 0;
 
-            foreach (User.User u in users)
+            foreach (User u in users)
             {
                 if (count >= 10)
                 {
@@ -70,16 +77,58 @@ namespace Visualisateur
                     Width = 115,
                     Height = 115
                 };
+                b.Click += Btn_User_Click;
 
-
-                Grid.SetColumn(b, count % 5);
-                Grid.SetRow(b, count / 5);
                 usersGrid.Children.Add(b);
+
+                int col = count % 4;
+                int ran = count / 4;
+
+                Grid.SetColumn(b, col);
+                Grid.SetRow(b, ran);
+
 
                 count++;
             }
         }
 
+        private void Btn_delete_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentUser != null)
+            {
+                MessageBoxResult msgr = MessageBox.Show("Voulez-vous supprimer cet utilisateur ?", "Supprimer un utilisateur", MessageBoxButton.YesNo);
+                if (msgr.Equals(MessageBoxResult.Yes))
+                {
+                    users.Remove(currentUser);
+                    cw.WriteXmlUser(users);
+                    CreateButton();
+                }
+            }
+        }
 
+        private void Btn_User_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+            currentUser = FindUser(b.Content.ToString());
+        }
+
+        private User FindUser(string v)
+        {
+            foreach (User u in users)
+            {
+                if (u.Pseudo == v)
+                {
+                    return u;
+                }
+            }
+            return null;
+        }
+
+        private void Btn_connexion_Click(object sender, RoutedEventArgs e)
+        {
+            LibraryWindow lw = new LibraryWindow(currentUser);
+            lw.Show();
+            this.Close();
+        }
     }
 }

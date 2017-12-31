@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Visualisateur.User
+namespace Visualisateur.Other
 {
     public class User
     {
