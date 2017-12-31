@@ -12,22 +12,23 @@ namespace Visualisateur.Windows
     /// </summary>
     public partial class CreateWindow : Window
     {
-        public CreateWindow()
+        private string path;
+
+        public CreateWindow(string p)
         {
+            path = p + "users.xml";
             InitializeComponent();
         }
 
         private void Btn_Create_Click(object sender, RoutedEventArgs e)
         {
-            string path = @".\\users\\users.xml";
-
-            List<User.User> list = ReadXml(path);
+            List<User.User> list = ReadXmlUser();
             User.User us = new User.User(Txt_Pseudo.Text, @".\\users\\" + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
 
-            if (SinglePseudo(list,us.GetPseudo()))
+            if (SinglePseudo(list,us.Pseudo))
             {
                 list.Add(us);
-                WriteXml(path, list);
+                WriteXmlUser(list);
                 this.Close();
             }
             else
@@ -44,7 +45,7 @@ namespace Visualisateur.Windows
         {
             foreach (User.User u in list)
             {
-                if (u.GetPseudo().Equals(pseudo))
+                if (u.Pseudo == pseudo)
                 {
                     return false;
                 }
@@ -52,7 +53,7 @@ namespace Visualisateur.Windows
             return true;
         }
 
-        private void WriteXml(string path, List<User.User> list)
+        private void WriteXmlUser( List<User.User> list)
         {
             XmlDocument doc = new XmlDocument();
             XmlNode rootNode = doc.CreateElement("users");
@@ -64,15 +65,15 @@ namespace Visualisateur.Windows
                 rootNode.AppendChild(user);
 
                 XmlNode pseudoNode = doc.CreateElement("pseudo");
-                pseudoNode.InnerText = u.GetPseudo();
+                pseudoNode.InnerText = u.Pseudo;
                 user.AppendChild(pseudoNode);
 
                 XmlNode nameNode = doc.CreateElement("name");
-                nameNode.InnerText = u.GetName();
+                nameNode.InnerText = u.Name;
                 user.AppendChild(nameNode);
 
                 XmlNode pathNode = doc.CreateElement("path");
-                pathNode.InnerText = u.GetPath();
+                pathNode.InnerText = u.Path;
                 user.AppendChild(pathNode);
             }
 
@@ -80,7 +81,7 @@ namespace Visualisateur.Windows
 
         }
 
-        private List<User.User> ReadXml(string path)
+        public List<User.User> ReadXmlUser()
         {
             List<User.User> list = new List<User.User>();
             XmlDocument doc = new XmlDocument();

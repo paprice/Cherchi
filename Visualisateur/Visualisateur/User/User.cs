@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Visualisateur.User
 {
-    class User
+    public class User
     {
-        string pseudo;
-        string name;
-        string path;
-
         public User()
         {
 
@@ -19,24 +15,16 @@ namespace Visualisateur.User
 
         public User(string p, string pa, string n)
         {
-            pseudo = p;
-            name = n;
-            path = pa;
+            Pseudo = p;
+            Name = n;
+            Path = pa;
         }
 
-        public string GetPseudo()
-        {
-            return pseudo;
-        }
+        public string Pseudo { get; set; }
 
-        public string GetName()
-        {
-            return name;
-        }
+        public string Name { get; set; }
 
-        public string GetPath()
-        {
-            return path;
-        }
+        public string Path { get; set; }
+
     }
 }

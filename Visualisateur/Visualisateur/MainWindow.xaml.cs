@@ -1,8 +1,10 @@
 ﻿using MahApps.Metro.Controls;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-
+using System.Windows.Controls;
+using Visualisateur.Windows;
 
 namespace Visualisateur
 {
@@ -11,15 +13,20 @@ namespace Visualisateur
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string path = @".\\users\\";
+        private CreateWindow cw;
+
+
         public MainWindow()
         {
+            cw = new Windows.CreateWindow(path);
             InitializeComponent();
             CreateDirectory();
+            CreateButton();
         }
 
         private void CreateDirectory()
         {
-            string path = @".\\users\\";
 
             try
             {
@@ -40,8 +47,39 @@ namespace Visualisateur
 
         private void Btn_create_Click(object sender, RoutedEventArgs e)
         {
-            Windows.CreateWindow cw = new Windows.CreateWindow();
             cw.Show();
+
+            CreateButton();
+
         }
+
+        private void CreateButton()
+        {
+            List<User.User> users = cw.ReadXmlUser();
+            int count = 0;
+
+            foreach (User.User u in users)
+            {
+                if (count >= 10)
+                {
+                    break;
+                }
+                Button b = new Button
+                {
+                    Content = u.Pseudo,
+                    Width = 115,
+                    Height = 115
+                };
+
+
+                Grid.SetColumn(b, count % 5);
+                Grid.SetRow(b, count / 5);
+                usersGrid.Children.Add(b);
+
+                count++;
+            }
+        }
+
+
     }
 }
