@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:Visualisateur.Windows"
-        Title="LibraryWindow" Height="700" Width="700">
+        Title="Librairie" Height="700" Width="800">
     <Grid Name ="main" Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -19,5 +19,6 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Button x:Name="btn_lastPage" Content="Dernière page" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="4" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </Window>
