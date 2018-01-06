@@ -10,7 +10,7 @@ namespace Visualisateur.Windows
     /// <summary>
     /// Interaction logic for CreateWindow.xaml
     /// </summary>
-    public partial class CreateWindow : Window
+    public partial class CreateWindow : MetroWindow
     {
         private string path;
 

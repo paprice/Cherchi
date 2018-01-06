@@ -1,4 +1,5 @@
 ﻿
+using MahApps.Metro.Controls;
 using Microsoft.WindowsAPICodePack.Shell;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,8 @@ namespace Visualisateur.Windows
     /// <summary>
     /// Interaction logic for LibraryWindow.xaml
     /// </summary>
-    public partial class LibraryWindow : Window
+    public partial class LibraryWindow : MetroWindow
     {
-        //private User user;
         private string userName;
         private List<FileInfo> filesInfo;
         private List<Video> videos;
@@ -33,7 +33,6 @@ namespace Visualisateur.Windows
             this.Title = "Librairie de " + u.Name;
             firstIndex = 0;
             currentPage = 1;
-            //user = u;
             InitializeComponent();
 
             filesInfo = new List<FileInfo>();
@@ -99,17 +98,28 @@ namespace Visualisateur.Windows
 
             DirectoryInfo dirInfo = new DirectoryInfo("C:\\Users\\" + userName + "\\Videos\\");
 
-            FileInfo[] fi = dirInfo.GetFiles("*.*");
+            FileInfo[] fi = dirInfo.GetFiles("*.*",SearchOption.AllDirectories);
 
             foreach (FileInfo f in fi)
             {
-                if (!f.Extension.Equals(".ini"))
+                if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
                     filesInfo.Add(f);
             }
 
-            DirectoryInfo[] dirInfos = dirInfo.GetDirectories("*.*");
+            Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
+            {
+                return String.Compare(a.Name, b.Name);
+            });
 
-            foreach (DirectoryInfo di in dirInfos)
+            filesInfo.Sort(comparison);
+        }
+
+
+
+        private void GetFileInfo(DirectoryInfo[] dirs)
+        {
+
+            foreach (DirectoryInfo di in dirs)
             {
                 FileInfo[] fis = di.GetFiles("*.*");
                 foreach (FileInfo f in fis)
@@ -117,8 +127,8 @@ namespace Visualisateur.Windows
                     if (!f.Extension.Equals(".ini"))
                         filesInfo.Add(f);
                 }
+                GetFileInfo(di.GetDirectories());
             }
-
         }
 
         private void PrintList()
@@ -198,6 +208,8 @@ namespace Visualisateur.Windows
                 main.Children.Remove(v.Image);
                 main.Children.Remove(v.TextBlock);
             }
+            videos.RemoveRange(0, videos.Count);
+            
         }
 
         private void Btn_previousPage_Click(object sender, RoutedEventArgs e)
@@ -232,7 +244,6 @@ namespace Visualisateur.Windows
 
         private void Btn_lastPage_Click(object sender, RoutedEventArgs e)
         {
-
             int t = filesInfo.Count % 20;
             if (t != 0)
             {
@@ -242,7 +253,10 @@ namespace Visualisateur.Windows
                 lbl_currentPage.Content = currentPage;
                 PrintList();
             }
+        }
 
+        private void Btn_Setting_Click(object sender, RoutedEventArgs e)
+        {
 
         }
     }

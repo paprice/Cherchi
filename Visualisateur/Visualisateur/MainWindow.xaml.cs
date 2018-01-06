@@ -12,7 +12,7 @@ namespace Visualisateur
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         private string path = @".\\users\\";
         private CreateWindow cw;
@@ -37,7 +37,7 @@ namespace Visualisateur
             {
                 if (Directory.Exists(path))
                 {
-                    Console.WriteLine("That path exists already.");
+                    //Console.WriteLine("That path exists already.");
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace Visualisateur
             }
             catch (Exception ex)
             {
-                Console.WriteLine("The process failed: {0}", ex.ToString());
+                //Console.WriteLine("The process failed: {0}", ex.ToString());
             }
         }
 
