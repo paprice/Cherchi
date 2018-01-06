@@ -17,26 +17,36 @@ namespace Visualisateur.Windows
     /// </summary>
     public partial class LibraryWindow : Window
     {
-        private User user;
+        //private User user;
         private string userName;
         private List<FileInfo> filesInfo;
         private List<Video> videos;
+        private List<string> sees;
         private int firstIndex;
 
         private int currentPage;
 
+        private VideosSee see;
+
         public LibraryWindow(User u)
         {
+            this.Title = "Librairie de " + u.Name;
             firstIndex = 0;
+            currentPage = 1;
+            //user = u;
+            InitializeComponent();
+
             filesInfo = new List<FileInfo>();
             videos = new List<Video>();
-            user = u;
-            InitializeComponent();
+
+            see = new VideosSee(u.Path);
+            sees = see.ListSeeVideo();
+
             CreateList();
             PrintList();
         }
 
-        private void CreateButton(Bitmap bit, int count, string fileName)
+        private void CreateButton(Bitmap bit, int count, string fileName, Video v)
         {
             int col = count % 5;
             int row = count / 5;
@@ -45,10 +55,11 @@ namespace Visualisateur.Windows
             {
                 Source = GetImage(bit),
                 Width = 130,
+                Height = 100,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top
             };
-
+            v.Image = i;
             Grid.SetColumn(i, col);
             Grid.SetRow(i, row);
 
@@ -60,12 +71,19 @@ namespace Visualisateur.Windows
                 Margin = new Thickness(0, 75, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
                 Width = 130,
-                Background = System.Windows.Media.Brushes.LightGray,
-
-
             };
-            t.MouseUp += Tb_Click;
 
+            if (!sees.Contains(fileName))
+            {
+                t.Background = System.Windows.Media.Brushes.LightGray;
+            }
+            else
+            {
+                t.Background = System.Windows.Media.Brushes.LightGreen;
+            }
+
+            t.MouseUp += Tb_Click;
+            v.TextBlock = t;
             Grid.SetColumn(t, col);
             Grid.SetRow(t, row);
 
@@ -105,6 +123,7 @@ namespace Visualisateur.Windows
 
         private void PrintList()
         {
+            RemoveVideos();
             int count = 0;
             for (int i = firstIndex; i < firstIndex + 20; i++)
             {
@@ -115,10 +134,12 @@ namespace Visualisateur.Windows
                     ShellFile shellFile = ShellFile.FromFilePath(files.FullName);
                     Bitmap shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
 
+                    shellFile.Dispose();
+
                     Video v = new Video(files.FullName, files.Name);
                     videos.Add(v);
 
-                    CreateButton(shellThumb, count, files.Name);
+                    CreateButton(shellThumb, count, files.Name, v);
                     count++;
                 }
                 else
@@ -162,12 +183,67 @@ namespace Visualisateur.Windows
                 if (v.FileName.Equals(tb.Text))
                 {
                     path = v.FullPath;
+
+                    see.SaveVideo(v.FileName);
                 }
             }
-
             Process.Start(path);
+            PrintList();
         }
 
+        private void RemoveVideos()
+        {
+            foreach (Video v in videos)
+            {
+                main.Children.Remove(v.Image);
+                main.Children.Remove(v.TextBlock);
+            }
+        }
 
+        private void Btn_previousPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (firstIndex >= 20)
+            {
+                firstIndex -= 20;
+                PrintList();
+                lbl_currentPage.Content = --currentPage;
+            }
+
+        }
+
+        private void Btn_firstPage_Click(object sender, RoutedEventArgs e)
+        {
+            firstIndex = 0;
+            currentPage = 1;
+            lbl_currentPage.Content = currentPage;
+            PrintList();
+
+        }
+
+        private void Btn_nextPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (filesInfo.Count > firstIndex + 20)
+            {
+                firstIndex += 20;
+                lbl_currentPage.Content = ++currentPage;
+                PrintList();
+            }
+        }
+
+        private void Btn_lastPage_Click(object sender, RoutedEventArgs e)
+        {
+
+            int t = filesInfo.Count % 20;
+            if (t != 0)
+            {
+                int i = (filesInfo.Count / 20);
+                currentPage = i + 1;
+                firstIndex = i * 20;
+                lbl_currentPage.Content = currentPage;
+                PrintList();
+            }
+
+
+        }
     }
 }

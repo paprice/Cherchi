@@ -70,6 +70,7 @@
     </ApplicationDefinition>
     <Compile Include="Other\User.cs" />
     <Compile Include="Other\Video.cs" />
+    <Compile Include="Other\VideosSee.cs" />
     <Compile Include="Windows\CreateWindow.xaml.cs">
       <DependentUpon>CreateWindow.xaml</DependentUpon>
     </Compile>
