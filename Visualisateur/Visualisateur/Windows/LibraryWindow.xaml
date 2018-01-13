@@ -6,9 +6,29 @@
         Height="700" Width="800">
     <metro:MetroWindow.RightWindowCommands>
         <metro:WindowCommands>
-            <Button Name ="Setting" Content="settings" Click="Btn_Setting_Click"/>
+            <ToggleButton Content="Paramètres" 
+        IsChecked="{Binding ElementName=SettingControls, Path=IsOpen}" Cursor="Hand"/>
         </metro:WindowCommands>
     </metro:MetroWindow.RightWindowCommands>
+
+    <metro:MetroWindow.Flyouts>
+        <metro:FlyoutsControl>
+            <metro:Flyout Name="SettingControls" Header="Paramètres" Position="Right" Width="400" Theme="Adapt">
+                <StackPanel>
+                    <Label Content="Repertoire actuel : " Margin="10,0,0,0"/>
+                    <TextBox Name="txt_currentPath" Width="300" Height="25" HorizontalAlignment="Center" IsEnabled="False"/>
+                    <Label Content="Nouveau repertoire  :" Margin="10,0,0,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBox Name="txt_newPath" Width="250" Height="25" HorizontalAlignment="Center"/>
+                        <Button Name="checkRepository" Width="100" Content="Parcourir" Click="CheckRepository_Click"/>
+                    </StackPanel>
+                    <Button Name="btn_changePath" Width="150" Content="Changer de repertoire" Height="15" HorizontalAlignment="Center" Margin="10" Click="Btn_changePath_Click"/>
+                </StackPanel>
+            </metro:Flyout>
+        </metro:FlyoutsControl>
+    </metro:MetroWindow.Flyouts>
+
+
     <Grid Name ="main" Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

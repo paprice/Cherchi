@@ -23,6 +23,7 @@ namespace Visualisateur.Windows
         private List<Video> videos;
         private List<string> sees;
         private int firstIndex;
+        private string path;
 
         private int currentPage;
 
@@ -30,12 +31,18 @@ namespace Visualisateur.Windows
 
         public LibraryWindow(User u)
         {
+            InitializeComponent();
+            userName = Environment.UserName;
+
+            path = "C:\\Users\\" + userName + "\\Videos\\";
+
+            txt_currentPath.Text = path;
+
             this.Title = "Librairie de " + u.Name;
             firstIndex = 0;
             currentPage = 1;
-            InitializeComponent();
 
-            filesInfo = new List<FileInfo>();
+
             videos = new List<Video>();
 
             see = new VideosSee(u.Path);
@@ -94,24 +101,27 @@ namespace Visualisateur.Windows
 
         private void CreateList()
         {
-            userName = Environment.UserName;
-
-            DirectoryInfo dirInfo = new DirectoryInfo("C:\\Users\\" + userName + "\\Videos\\");
-
-            FileInfo[] fi = dirInfo.GetFiles("*.*",SearchOption.AllDirectories);
-
-            foreach (FileInfo f in fi)
+            using (new WaitCursor())
             {
-                if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
-                    filesInfo.Add(f);
+                filesInfo = new List<FileInfo>();
+
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+
+                FileInfo[] fi = dirInfo.GetFiles("*.*", SearchOption.AllDirectories);
+
+                foreach (FileInfo f in fi)
+                {
+                    if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
+                        filesInfo.Add(f);
+                }
+
+                Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
+                {
+                    return String.Compare(a.Name, b.Name);
+                });
+
+                filesInfo.Sort(comparison);
             }
-
-            Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
-            {
-                return String.Compare(a.Name, b.Name);
-            });
-
-            filesInfo.Sort(comparison);
         }
 
 
@@ -133,30 +143,33 @@ namespace Visualisateur.Windows
 
         private void PrintList()
         {
-            RemoveVideos();
-            int count = 0;
-            for (int i = firstIndex; i < firstIndex + 20; i++)
+            using (new WaitCursor())
             {
-                if (i < filesInfo.Count)
+                RemoveVideos();
+                int count = 0;
+                for (int i = firstIndex; i < firstIndex + 20; i++)
                 {
-                    FileInfo files = filesInfo[i];
+                    if (i < filesInfo.Count)
+                    {
+                        FileInfo files = filesInfo[i];
 
-                    ShellFile shellFile = ShellFile.FromFilePath(files.FullName);
-                    Bitmap shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
+                        ShellFile shellFile = ShellFile.FromFilePath(files.FullName);
+                        Bitmap shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
 
-                    shellFile.Dispose();
+                        shellFile.Dispose();
 
-                    Video v = new Video(files.FullName, files.Name);
-                    videos.Add(v);
+                        Video v = new Video(files.FullName, files.Name);
+                        videos.Add(v);
 
-                    CreateButton(shellThumb, count, files.Name, v);
-                    count++;
+                        CreateButton(shellThumb, count, files.Name, v);
+                        count++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
                 }
-                else
-                {
-                    break;
-                }
-
             }
         }
 
@@ -209,11 +222,12 @@ namespace Visualisateur.Windows
                 main.Children.Remove(v.TextBlock);
             }
             videos.RemoveRange(0, videos.Count);
-            
+
         }
 
         private void Btn_previousPage_Click(object sender, RoutedEventArgs e)
         {
+
             if (firstIndex >= 20)
             {
                 firstIndex -= 20;
@@ -255,8 +269,29 @@ namespace Visualisateur.Windows
             }
         }
 
-        private void Btn_Setting_Click(object sender, RoutedEventArgs e)
+        private void Btn_changePath_Click(object sender, RoutedEventArgs e)
         {
+            txt_currentPath.Text = txt_newPath.Text;
+            txt_newPath.Text = "";
+            path = txt_currentPath.Text;
+            firstIndex = 0;
+            currentPage = 1;
+            lbl_currentPage.Content = currentPage;
+            CreateList();
+            PrintList();
+        }
+
+        private void CheckRepository_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    txt_newPath.Text = dialog.SelectedPath;
+                }
+            }
+
 
         }
     }

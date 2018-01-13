@@ -32,21 +32,10 @@ namespace Visualisateur
 
         private void CreateDirectory()
         {
-
-            try
+            if (!Directory.Exists(path))
             {
-                if (Directory.Exists(path))
-                {
-                    //Console.WriteLine("That path exists already.");
-                }
-                else
-                {
-                    DirectoryInfo di = Directory.CreateDirectory(path);
-                }
-            }
-            catch (Exception ex)
-            {
-                //Console.WriteLine("The process failed: {0}", ex.ToString());
+                //Console.WriteLine("That path exists already.");
+                DirectoryInfo di = Directory.CreateDirectory(path);
             }
         }
 
