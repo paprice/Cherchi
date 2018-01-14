@@ -6,6 +6,8 @@
         Height="700" Width="800">
     <metro:MetroWindow.RightWindowCommands>
         <metro:WindowCommands>
+            <ToggleButton Name="tb_filters"  Content="Filtres" 
+        IsChecked="{Binding ElementName=FiltersControls, Path=IsOpen}" Cursor="Hand"/>
             <ToggleButton Content="Paramètres" 
         IsChecked="{Binding ElementName=SettingControls, Path=IsOpen}" Cursor="Hand"/>
         </metro:WindowCommands>
@@ -13,21 +15,40 @@
 
     <metro:MetroWindow.Flyouts>
         <metro:FlyoutsControl>
-            <metro:Flyout Name="SettingControls" Header="Paramètres" Position="Right" Width="400" Theme="Adapt">
+            <metro:Flyout Name="SettingControls" Header="Paramètres" Position="Right" Width="350" Theme="Adapt">
                 <StackPanel>
+                    <metro:ToggleSwitch Name="chk_lastPath" Content="Sauvegarder le dernier repertoire" Margin="10"  />
                     <Label Content="Repertoire actuel : " Margin="10,0,0,0"/>
-                    <TextBox Name="txt_currentPath" Width="300" Height="25" HorizontalAlignment="Center" IsEnabled="False"/>
-                    <Label Content="Nouveau repertoire  :" Margin="10,0,0,0"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBox Name="txt_newPath" Width="250" Height="25" HorizontalAlignment="Center"/>
-                        <Button Name="checkRepository" Width="100" Content="Parcourir" Click="CheckRepository_Click"/>
+                    <TextBox Name="txt_currentPath" Width="300" Height="25" HorizontalAlignment="Left" IsEnabled="False" Margin="10,0,0,0"/>
+                    <Label Content="Nouveau repertoire  :" Margin="10,0,20,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBox Name="txt_newPath" Width="250" Height="25" HorizontalAlignment="Left" Margin="10,0,0,0" metro:TextBoxHelper.Watermark="C:\... ou appuyer sur le bouton Parcourir"/>
+                        <Button Name="checkRepository" Width="75" Content="Parcourir" Click="CheckRepository_Click" Margin="10,0,0,0"/>
                     </StackPanel>
-                    <Button Name="btn_changePath" Width="150" Content="Changer de repertoire" Height="15" HorizontalAlignment="Center" Margin="10" Click="Btn_changePath_Click"/>
+                    <Button Name="btn_changePath" Width="150" Content="Changer de repertoire" Height="15" HorizontalAlignment="Center" Margin="0,20,0,0" Click="Btn_changePath_Click"/>
+                </StackPanel>
+            </metro:Flyout>
+
+            <metro:Flyout Name="FiltersControls" Header="Filtres" Position="Left" Width="300" Theme="Adapt">
+                <StackPanel>
+                    <StackPanel>
+                        <Label Content="Le nom contient : " Margin="10"/>
+                        <TextBox Name="txt_NameSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="Mot ou expression contenu dans le titre"/>
+                        <Button Name="btn_NameSearch" Width="125" Content="Rechercher" Height="25" Margin="10" Click="Btn_NameSearch_Click"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,50,0,0">
+                        <Label Content="Série (nécessite un sous-dossier à ce nom) " Margin="10" />
+                        <TextBox Name="txt_SerieSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="Nom du dossier de la serie" />
+                        <Label Name ="lbl_season" Content="Saison (sous dossier)" Margin="10"/>
+                        <TextBox Name="txt_SeasonSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="nom du dossier de la saison" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,50,0,0">
+                        <Button Name="btn_noFilter" Width="150" Content="Enlever le filtre" Height="25" Margin="10" Click="Btn_NoFilter_Click"/>
+                    </StackPanel>
                 </StackPanel>
             </metro:Flyout>
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>
-
 
     <Grid Name ="main" Margin="10,10,10,10">
         <Grid.RowDefinitions>

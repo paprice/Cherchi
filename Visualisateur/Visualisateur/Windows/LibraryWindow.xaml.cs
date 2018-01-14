@@ -60,7 +60,7 @@ namespace Visualisateur.Windows
             see = new VideosSee(user.GetPath());
             sees = see.ListSeeVideo();
 
-            CreateList();
+            CreateList("");
             PrintList();
         }
 
@@ -115,7 +115,7 @@ namespace Visualisateur.Windows
 
         }
 
-        private void CreateList()
+        private void CreateList(string filters)
         {
             using (new WaitCursor())
             {
@@ -123,12 +123,19 @@ namespace Visualisateur.Windows
 
                 DirectoryInfo dirInfo = new DirectoryInfo(path);
 
-                FileInfo[] fi = dirInfo.GetFiles("*.*", SearchOption.AllDirectories);
+                FileInfo[] fi = dirInfo.GetFiles("*"+filters+"*.*", SearchOption.AllDirectories);
 
                 foreach (FileInfo f in fi)
                 {
-                    if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
+                    /*
+                     if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
+                         filesInfo.Add(f);*/
+                    var contentType = MimeTypes.GetContentType(f.FullName);
+                    if (contentType.StartsWith("video"))
+                    {
+                        // do something with the image ...
                         filesInfo.Add(f);
+                    }
                 }
 
                 Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
@@ -137,21 +144,6 @@ namespace Visualisateur.Windows
                 });
 
                 filesInfo.Sort(comparison);
-            }
-        }
-
-        private void GetFileInfo(DirectoryInfo[] dirs)
-        {
-
-            foreach (DirectoryInfo di in dirs)
-            {
-                FileInfo[] fis = di.GetFiles("*.*");
-                foreach (FileInfo f in fis)
-                {
-                    if (!f.Extension.Equals(".ini"))
-                        filesInfo.Add(f);
-                }
-                GetFileInfo(di.GetDirectories());
             }
         }
 
@@ -182,7 +174,6 @@ namespace Visualisateur.Windows
                     {
                         break;
                     }
-
                 }
             }
         }
@@ -248,28 +239,32 @@ namespace Visualisateur.Windows
 
             if (firstIndex >= 20)
             {
-                firstIndex -= 20;
+                ChangePage(currentPage-1);
                 PrintList();
-                lbl_currentPage.Content = --currentPage;
             }
 
         }
 
         private void Btn_firstPage_Click(object sender, RoutedEventArgs e)
         {
-            firstIndex = 0;
             currentPage = 1;
-            lbl_currentPage.Content = currentPage;
+            ChangePage(1);
             PrintList();
 
+        }
+
+        private void ChangePage(int newPage)
+        {
+            currentPage = newPage;
+            lbl_currentPage.Content = currentPage;
+            firstIndex = (currentPage - 1) * 20;
         }
 
         private void Btn_nextPage_Click(object sender, RoutedEventArgs e)
         {
             if (filesInfo.Count > firstIndex + 20)
             {
-                firstIndex += 20;
-                lbl_currentPage.Content = ++currentPage;
+                ChangePage(currentPage+1);
                 PrintList();
             }
         }
@@ -280,9 +275,7 @@ namespace Visualisateur.Windows
             if (t != 0)
             {
                 int i = (filesInfo.Count / 20);
-                currentPage = i + 1;
-                firstIndex = i * 20;
-                lbl_currentPage.Content = currentPage;
+                ChangePage(i+1);
                 PrintList();
             }
         }
@@ -292,18 +285,19 @@ namespace Visualisateur.Windows
             txt_currentPath.Text = txt_newPath.Text;
             txt_newPath.Text = "";
             path = txt_currentPath.Text;
-            firstIndex = 0;
-            currentPage = 1;
-            lbl_currentPage.Content = currentPage;
-            CreateList();
+            ChangePage(1);
+            CreateList("");
             PrintList();
 
-            List<User> userList = User.ReadXmlUser(usersPath);
-            User u = userList.Find(x => user.Equals(x));
-            userList.Remove(user);
-            u.SetLastVideoPath(txt_currentPath.Text);
-            userList.Add(u);
-            User.WriteXmlUser(userList, usersPath);
+            if (chk_lastPath.IsChecked.Value)
+            {
+                List<User> userList = User.ReadXmlUser(usersPath);
+                User u = userList.Find(x => user.Equals(x));
+                userList.Remove(user);
+                u.SetLastVideoPath(txt_currentPath.Text);
+                userList.Add(u);
+                User.WriteXmlUser(userList, usersPath);
+            }
         }
 
         private void CheckRepository_Click(object sender, RoutedEventArgs e)
@@ -316,6 +310,27 @@ namespace Visualisateur.Windows
                     txt_newPath.Text = dialog.SelectedPath;
                 }
             }
+        }
+
+        private void Btn_NameSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if(txt_NameSearch.Text != "")
+            {
+                ChangePage(1);
+                CreateList(txt_NameSearch.Text);
+                PrintList();
+                txt_NameSearch.Text = "";
+                tb_filters.IsChecked = false;
+            }
+        }
+
+        private void Btn_NoFilter_Click(object sender, RoutedEventArgs e)
+        {
+            ChangePage(1);
+            CreateList("");
+            PrintList();
+            txt_NameSearch.Text = "";
+            tb_filters.IsChecked = false;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Visualisateur.Windows;
 using Visualisateur.Other;
+using System.Threading.Tasks;
 
 namespace Visualisateur
 {
@@ -86,8 +88,9 @@ namespace Visualisateur
         {
             if (currentUser != null)
             {
-                MessageBoxResult msgr = MessageBox.Show("Voulez-vous supprimer cet utilisateur ?", "Supprimer un utilisateur", MessageBoxButton.YesNo);
-                if (msgr.Equals(MessageBoxResult.Yes))
+                var result = this.ShowModalMessageExternal("Supprimer", "Voulez-vous suppirmer cet utilisateur ?", MessageDialogStyle.AffirmativeAndNegative);
+
+                if(result.Equals(MessageDialogResult.Affirmative))
                 {
                     users.Remove(currentUser);
                     User.WriteXmlUser(users,pathUsersFile);

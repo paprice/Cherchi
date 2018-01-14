@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace Visualisateur.Other
 {
-    public class User
+    public class User : IEquatable<User>
     {
         private string pseudo;
         private string name;
@@ -80,6 +80,7 @@ namespace Visualisateur.Other
                 XmlNode videosNode = doc.CreateElement("videosPath");
                 videosNode.InnerText = u.lastVideoPath;
                 user.AppendChild(videosNode);
+
             }
 
             doc.Save(path);
@@ -128,15 +129,15 @@ namespace Visualisateur.Other
             return list;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(User other)
         {
-            User u = (User)obj;
-            return (pseudo == u.pseudo && name == u.name && path == u.path);
+            return other != null &&
+                   pseudo == other.pseudo;
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 538807162;
+            var hashCode = 100831046;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(pseudo);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(path);
