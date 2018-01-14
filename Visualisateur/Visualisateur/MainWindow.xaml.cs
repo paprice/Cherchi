@@ -14,7 +14,8 @@ namespace Visualisateur
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private string path = @".\\users\\";
+        private string pathDirectory = @".\\users\\";
+        private string pathUsersFile;
         private CreateWindow cw;
 
         private User currentUser;
@@ -24,7 +25,8 @@ namespace Visualisateur
 
         public MainWindow()
         {
-            cw = new CreateWindow(path);
+            pathUsersFile = pathDirectory + "users.xml";
+            cw = new CreateWindow(pathUsersFile);
             InitializeComponent();
             CreateDirectory();
             CreateButton();
@@ -32,10 +34,9 @@ namespace Visualisateur
 
         private void CreateDirectory()
         {
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(pathDirectory))
             {
-                //Console.WriteLine("That path exists already.");
-                DirectoryInfo di = Directory.CreateDirectory(path);
+                DirectoryInfo di = Directory.CreateDirectory(pathDirectory);
             }
         }
 
@@ -51,7 +52,7 @@ namespace Visualisateur
         {
             usersGrid.Children.RemoveRange(0, usersGrid.Children.Capacity);
 
-            users = cw.ReadXmlUser();
+            users = User.ReadXmlUser(pathUsersFile);
             int count = 0;
 
             foreach (User u in users)
@@ -62,7 +63,7 @@ namespace Visualisateur
                 }
                 Button b = new Button
                 {
-                    Content = u.Pseudo,
+                    Content = u.GetPseudo(),
                     Width = 115,
                     Height = 115
                 };
@@ -89,7 +90,7 @@ namespace Visualisateur
                 if (msgr.Equals(MessageBoxResult.Yes))
                 {
                     users.Remove(currentUser);
-                    cw.WriteXmlUser(users);
+                    User.WriteXmlUser(users,pathUsersFile);
                     CreateButton();
                 }
             }
@@ -105,7 +106,7 @@ namespace Visualisateur
         {
             foreach (User u in users)
             {
-                if (u.Pseudo == v)
+                if (u.GetPseudo().Equals(v))
                 {
                     return u;
                 }
@@ -115,9 +116,12 @@ namespace Visualisateur
 
         private void Btn_connexion_Click(object sender, RoutedEventArgs e)
         {
-            LibraryWindow lw = new LibraryWindow(currentUser);
-            lw.Show();
-            this.Close();
+            if (currentUser != null)
+            {
+                LibraryWindow lw = new LibraryWindow(currentUser,pathUsersFile);
+                lw.Show();
+                this.Close();
+            }
         }
     }
 }

@@ -24,28 +24,40 @@ namespace Visualisateur.Windows
         private List<string> sees;
         private int firstIndex;
         private string path;
+        private string usersPath;
+        private User user;
 
         private int currentPage;
 
         private VideosSee see;
 
-        public LibraryWindow(User u)
+        public LibraryWindow(User u, string up)
         {
             InitializeComponent();
             userName = Environment.UserName;
+            user = u;
+            if (user.GetLastPath() != "")
+            {
+                path = user.GetLastPath();
+            }
+            else
+            {
+                path = "C:\\Users\\" + userName + "\\Videos\\";
+            }
 
-            path = "C:\\Users\\" + userName + "\\Videos\\";
+            usersPath = up;
+
 
             txt_currentPath.Text = path;
 
-            this.Title = "Librairie de " + u.Name;
+            this.Title = "Librairie de " + user.GetName();
             firstIndex = 0;
             currentPage = 1;
 
 
             videos = new List<Video>();
 
-            see = new VideosSee(u.Path);
+            see = new VideosSee(user.GetPath());
             sees = see.ListSeeVideo();
 
             CreateList();
@@ -69,6 +81,7 @@ namespace Visualisateur.Windows
             Grid.SetColumn(i, col);
             Grid.SetRow(i, row);
 
+
             TextBlock t = new TextBlock
             {
                 Text = fileName,
@@ -89,6 +102,9 @@ namespace Visualisateur.Windows
             }
 
             t.MouseUp += Tb_Click;
+            t.MouseMove += Tb_Over;
+            //t.MouseLeave += Tb_Exit;
+
             v.TextBlock = t;
             Grid.SetColumn(t, col);
             Grid.SetRow(t, row);
@@ -123,8 +139,6 @@ namespace Visualisateur.Windows
                 filesInfo.Sort(comparison);
             }
         }
-
-
 
         private void GetFileInfo(DirectoryInfo[] dirs)
         {
@@ -173,7 +187,6 @@ namespace Visualisateur.Windows
             }
         }
 
-
         private BitmapImage GetImage(Bitmap src)
         {
             BitmapImage image = new BitmapImage();
@@ -196,8 +209,13 @@ namespace Visualisateur.Windows
             Application.Current.Shutdown();
         }
 
+        private void Tb_Over(object sender, RoutedEventArgs e)
+        {
+            if (System.Windows.Forms.Cursor.Current != System.Windows.Forms.Cursors.Hand)
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+        }
 
-        public void Tb_Click(object sender, RoutedEventArgs e)
+        private void Tb_Click(object sender, RoutedEventArgs e)
         {
             TextBlock tb = (TextBlock)sender;
             string path = "";
@@ -279,6 +297,13 @@ namespace Visualisateur.Windows
             lbl_currentPage.Content = currentPage;
             CreateList();
             PrintList();
+
+            List<User> userList = User.ReadXmlUser(usersPath);
+            User u = userList.Find(x => user.Equals(x));
+            userList.Remove(user);
+            u.SetLastVideoPath(txt_currentPath.Text);
+            userList.Add(u);
+            User.WriteXmlUser(userList, usersPath);
         }
 
         private void CheckRepository_Click(object sender, RoutedEventArgs e)
@@ -291,8 +316,6 @@ namespace Visualisateur.Windows
                     txt_newPath.Text = dialog.SelectedPath;
                 }
             }
-
-
         }
     }
 }
