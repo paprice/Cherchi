@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:Visualisateur.Windows"
+                   
         Height="700" Width="800">
     <metro:MetroWindow.RightWindowCommands>
         <metro:WindowCommands>
@@ -50,7 +51,7 @@
         </metro:FlyoutsControl>
     </metro:MetroWindow.Flyouts>
 
-    <Grid Name ="main" Margin="10,10,10,10">
+    <!--<Grid Name ="main" Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -70,5 +71,16 @@
         <Button x:Name="btn_nextPage" Content="Suivante" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Width="130" Click="Btn_nextPage_Click"/>
         <Button x:Name="btn_lastPage" Content="Dernière" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Width="130" Click="Btn_lastPage_Click"/>
         <Label x:Name="lbl_currentPage" Content="1" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Width="40" HorizontalContentAlignment="Center"/>
-    </Grid>
+    </Grid>-->
+    <DockPanel>
+        <WrapPanel Name ="main" Margin="10,10,10,10" VerticalAlignment="Top">
+        </WrapPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <Button x:Name="btn_previousPage" Content="Précédent" Width="130" Click="Btn_previousPage_Click" Margin="20,0,20,0"/>
+            <Button x:Name="btn_firstPage" Content="Première"  Width="130" Click="Btn_firstPage_Click" Margin="20,0,20,0"/>
+            <Label x:Name="lbl_currentPage" Content="1"  Width="40" HorizontalContentAlignment="Center" Margin="20,0,20,0"/>
+            <Button x:Name="btn_nextPage" Content="Suivante"   Width="130" Click="Btn_nextPage_Click" Margin="20,0,20,0"/>
+            <Button x:Name="btn_lastPage" Content="Dernière" Width="130" Click="Btn_lastPage_Click" Margin="20,0,20,0"/>
+        </StackPanel>
+    </DockPanel>
 </metro:MetroWindow>

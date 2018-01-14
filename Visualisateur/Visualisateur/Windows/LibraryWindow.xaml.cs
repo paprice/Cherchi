@@ -20,7 +20,7 @@ namespace Visualisateur.Windows
     {
         private string userName;
         private List<FileInfo> filesInfo;
-        private List<Video> videos;
+        private List<VideoTemplate> videos;
         private List<string> sees;
         private int firstIndex;
         private string path;
@@ -55,7 +55,7 @@ namespace Visualisateur.Windows
             currentPage = 1;
 
 
-            videos = new List<Video>();
+            videos = new List<VideoTemplate>();
 
             see = new VideosSee(user.GetPath());
             sees = see.ListSeeVideo();
@@ -64,55 +64,31 @@ namespace Visualisateur.Windows
             PrintList();
         }
 
-        private void CreateButton(Bitmap bit, int count, string fileName, Video v)
+        private VideoTemplate CreateButton(Bitmap bit, int count, string fileName, string path)
         {
             int col = count % 5;
             int row = count / 5;
 
-            System.Windows.Controls.Image i = new System.Windows.Controls.Image
+            VideoTemplate vt = new VideoTemplate(GetImage(bit), fileName, path)
             {
-                Source = GetImage(bit),
-                Width = 130,
-                Height = 100,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            v.Image = i;
-            Grid.SetColumn(i, col);
-            Grid.SetRow(i, row);
-
-
-            TextBlock t = new TextBlock
-            {
-                Text = fileName,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(0, 75, 0, 0),
-                TextWrapping = TextWrapping.Wrap,
-                Width = 130,
+                Height = 175
             };
 
             if (!sees.Contains(fileName))
             {
-                t.Background = System.Windows.Media.Brushes.LightGray;
+                vt.name.Background = System.Windows.Media.Brushes.LightGray;
             }
             else
             {
-                t.Background = System.Windows.Media.Brushes.LightGreen;
+               vt.name.Background = System.Windows.Media.Brushes.LightGreen;
             }
 
-            t.MouseUp += Tb_Click;
-            t.MouseMove += Tb_Over;
-            //t.MouseLeave += Tb_Exit;
+            vt.MouseUp += Tb_Click;
+            vt.MouseMove += Tb_Over;
 
-            v.TextBlock = t;
-            Grid.SetColumn(t, col);
-            Grid.SetRow(t, row);
+            main.Children.Add(vt);
 
-            main.Children.Add(i);
-            main.Children.Add(t);
-
-
+            return vt;
         }
 
         private void CreateList(string filters)
@@ -133,7 +109,6 @@ namespace Visualisateur.Windows
                     var contentType = MimeTypes.GetContentType(f.FullName);
                     if (contentType.StartsWith("video"))
                     {
-                        // do something with the image ...
                         filesInfo.Add(f);
                     }
                 }
@@ -164,10 +139,10 @@ namespace Visualisateur.Windows
 
                         shellFile.Dispose();
 
-                        Video v = new Video(files.FullName, files.Name);
-                        videos.Add(v);
+                        //Video v = new Video(files.FullName, files.Name);
+                        //videos.Add(v);
 
-                        CreateButton(shellThumb, count, files.Name, v);
+                        videos.Add(CreateButton(shellThumb, count, files.Name, files.FullName));
                         count++;
                     }
                     else
@@ -208,15 +183,16 @@ namespace Visualisateur.Windows
 
         private void Tb_Click(object sender, RoutedEventArgs e)
         {
-            TextBlock tb = (TextBlock)sender;
+            VideoTemplate vt = (VideoTemplate)sender;
             string path = "";
-            foreach (Video v in videos)
+            foreach (VideoTemplate v in videos)
             {
-                if (v.FileName.Equals(tb.Text))
+                if (v.name.Text.Equals(vt.name.Text))
                 {
-                    path = v.FullPath;
+                    path = v.path;
 
-                    see.SaveVideo(v.FileName);
+                    see.SaveVideo(v.name.Text);
+                    break;
                 }
             }
             Process.Start(path);
@@ -225,10 +201,10 @@ namespace Visualisateur.Windows
 
         private void RemoveVideos()
         {
-            foreach (Video v in videos)
+            foreach (VideoTemplate v in videos)
             {
-                main.Children.Remove(v.Image);
-                main.Children.Remove(v.TextBlock);
+                main.Children.Remove(v);
+                //main.Children.Remove(v.TextBlock);
             }
             videos.RemoveRange(0, videos.Count);
 

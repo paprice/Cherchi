@@ -11,6 +11,9 @@ namespace Visualisateur.Other
     {
         private string path;
         private List<string> sees;
+        private string lastPath;
+        private string lastFilter;
+
 
         public VideosSee()
         {
@@ -21,6 +24,8 @@ namespace Visualisateur.Other
         {
             path = p;
             sees = new List<string>();
+            lastFilter = "";
+            lastPath = "";
         }
 
         public void SaveVideo(string name)
@@ -30,7 +35,15 @@ namespace Visualisateur.Other
             XmlNode rootNode = doc.CreateElement("videos");
             doc.AppendChild(rootNode);
 
-            foreach(string s in sees)
+         /*   XmlNode lp = doc.CreateElement("lasPath");
+            lp.InnerText = lastPath;
+            rootNode.AppendChild(lp);
+
+            XmlNode lf = doc.CreateElement("lasFilter");
+            lf.InnerText = lastFilter;
+            rootNode.AppendChild(lf);*/
+
+            foreach (string s in sees)
             {
                 XmlNode video = doc.CreateElement("video");
                 rootNode.AppendChild(video);
