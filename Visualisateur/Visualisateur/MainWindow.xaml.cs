@@ -28,7 +28,7 @@ namespace Visualisateur
         public MainWindow()
         {
             string userName = Environment.UserName;
-            pathDirectory = @"C:\\Users\\" + userName + "\\Documents\\cherci\\";
+            pathDirectory = @"C:\\Users\\" + userName + "\\Documents\\Cherchi\\";
 
             pathUsersFile = pathDirectory + "users.xml";
             cw = new CreateWindow(pathDirectory);
@@ -126,8 +126,15 @@ namespace Visualisateur
             {
                 LibraryWindow lw = new LibraryWindow(currentUser,pathUsersFile);
                 lw.Show();
-                this.Close();
+                this.Hide();
             }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            Application.Current.Shutdown();
         }
     }
 }
