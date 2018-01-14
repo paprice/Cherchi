@@ -53,7 +53,7 @@ public class MimeTypes
                 mime = "application/octet-stream";
             return mime;
         }
-        catch (Exception ex)
+        catch
         {
             return "application/octet-stream";
         }

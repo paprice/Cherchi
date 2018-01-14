@@ -34,6 +34,7 @@ namespace Visualisateur.Windows
         public LibraryWindow(User u, string up)
         {
             InitializeComponent();
+
             userName = Environment.UserName;
             user = u;
             if (user.GetLastPath() != "")
@@ -86,7 +87,7 @@ namespace Visualisateur.Windows
             vt.MouseUp += Tb_Click;
             vt.MouseMove += Tb_Over;
 
-            main.Children.Add(vt);
+            wrap.Children.Add(vt);
 
             return vt;
         }
@@ -203,7 +204,7 @@ namespace Visualisateur.Windows
         {
             foreach (VideoTemplate v in videos)
             {
-                main.Children.Remove(v);
+                wrap.Children.Remove(v);
                 //main.Children.Remove(v.TextBlock);
             }
             videos.RemoveRange(0, videos.Count);
