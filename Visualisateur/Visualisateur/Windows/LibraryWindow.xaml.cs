@@ -146,10 +146,6 @@ namespace Visualisateur.Windows
                             filesInfo.Sort(comparison);
                         }
                     }
-
-
-
-
                 }
             }
         }
@@ -165,7 +161,6 @@ namespace Visualisateur.Windows
                     if (i < filesInfo.Count)
                     {
                         FileInfo files = filesInfo[i];
-
 
                         ShellFile shellFile = ShellFile.FromFilePath(files.FullName);
                         Bitmap shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
@@ -244,26 +239,21 @@ namespace Visualisateur.Windows
                 wrap.Children.Remove(v);
             }
             videos.RemoveRange(0, videos.Count);
-
         }
 
         private void Btn_previousPage_Click(object sender, RoutedEventArgs e)
         {
-
             if (firstIndex >= 20)
             {
                 ChangePage(currentPage - 1);
                 PrintList();
             }
-
         }
 
         private void Btn_firstPage_Click(object sender, RoutedEventArgs e)
         {
-            currentPage = 1;
             ChangePage(1);
             PrintList();
-
         }
 
         private void ChangePage(int newPage)
@@ -358,8 +348,6 @@ namespace Visualisateur.Windows
                 PrintList();
             }
         }
-
-
 
         private void Chk_NotSeen_Checked(object sender, RoutedEventArgs e)
         {
