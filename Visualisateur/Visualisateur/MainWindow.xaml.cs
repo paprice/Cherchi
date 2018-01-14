@@ -16,7 +16,7 @@ namespace Visualisateur
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private string pathDirectory = @".\\users\\";
+        private string pathDirectory;
         private string pathUsersFile;
         private CreateWindow cw;
 
@@ -27,8 +27,11 @@ namespace Visualisateur
 
         public MainWindow()
         {
+            string userName = Environment.UserName;
+            pathDirectory = @"C:\\Users\\" + userName + "\\Documents\\cherci\\";
+
             pathUsersFile = pathDirectory + "users.xml";
-            cw = new CreateWindow(pathUsersFile);
+            cw = new CreateWindow(pathDirectory);
             InitializeComponent();
             CreateDirectory();
             CreateButton();

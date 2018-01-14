@@ -12,23 +12,25 @@ namespace Visualisateur.Windows
     /// </summary>
     public partial class CreateWindow : MetroWindow
     {
-        private string path;
+        private string pathDirectory;
+        private string pathUsers;
 
         public CreateWindow(string p)
         {
-            path = p;
+            pathDirectory = p;
+            pathUsers = p + "users.xml";
             InitializeComponent();
         }
 
         private void Btn_Create_Click(object sender, RoutedEventArgs e)
         {
-            List<User> list = User.ReadXmlUser(path);
-            User us = new User(Txt_Pseudo.Text, @".\\users\\" + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
+            List<User> list = User.ReadXmlUser(pathUsers);
+            User us = new User(Txt_Pseudo.Text, pathDirectory + Txt_Pseudo.Text + ".xml", Txt_Name.Text);
 
             if (SinglePseudo(list, us.GetPseudo()))
             {
                 list.Add(us);
-                User.WriteXmlUser(list,path);
+                User.WriteXmlUser(list,pathUsers);
                 this.Close();
             }
             else

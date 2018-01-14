@@ -9,7 +9,7 @@
         <metro:WindowCommands>
             <ToggleButton Name="tb_filters"  Content="Filtres" 
         IsChecked="{Binding ElementName=FiltersControls, Path=IsOpen}" Cursor="Hand"/>
-            <ToggleButton Content="Paramètres" 
+            <ToggleButton Name="tb_settings" Content="Paramètres" 
         IsChecked="{Binding ElementName=SettingControls, Path=IsOpen}" Cursor="Hand"/>
         </metro:WindowCommands>
     </metro:MetroWindow.RightWindowCommands>
@@ -33,6 +33,9 @@
             <metro:Flyout Name="FiltersControls" Header="Filtres" Position="Left" Width="300" Theme="Adapt">
                 <StackPanel>
                     <StackPanel>
+                        <metro:ToggleSwitch Name="chk_NotSeen" Content="Voir seulement les non vus" Margin="10" Checked="Chk_NotSeen_Checked" Unchecked="Chk_OnlySeen_Unchecked"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,20,0,0">
                         <Label Content="Le nom contient : " Margin="10"/>
                         <TextBox Name="txt_NameSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="Mot ou expression contenu dans le titre"/>
                         <Button Name="btn_NameSearch" Width="125" Content="Rechercher" Height="25" Margin="10" Click="Btn_NameSearch_Click"/>
@@ -42,6 +45,7 @@
                         <TextBox Name="txt_SerieSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="Nom du dossier de la serie" />
                         <Label Name ="lbl_season" Content="Saison (sous dossier)" Margin="10"/>
                         <TextBox Name="txt_SeasonSearch" Width="250" Height="25" HorizontalAlignment="Left" Margin="20,0,0,0" metro:TextBoxHelper.Watermark="nom du dossier de la saison" />
+                        <Button Name="btn_SeriesSearch" Width="125" Content="Rechercher" Height="25" Margin="10" Click="Btn_SeriesSearch_Click"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,50,0,0">
                         <Button Name="btn_noFilter" Width="150" Content="Enlever le filtre" Height="25" Margin="10" Click="Btn_NoFilter_Click"/>
@@ -56,8 +60,8 @@
         <WrapPanel Name ="wrap" Margin="10,10,10,10" VerticalAlignment="Top">
         </WrapPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                <Button x:Name="btn_previousPage" Content="Précédent" Width="130" Click="Btn_previousPage_Click" Margin="10,0,10,0"/>
                 <Button x:Name="btn_firstPage" Content="Première"  Width="130" Click="Btn_firstPage_Click" Margin="10,0,10,0"/>
+                <Button x:Name="btn_previousPage" Content="Précédent" Width="130" Click="Btn_previousPage_Click" Margin="10,0,10,0"/>
                 <Label x:Name="lbl_currentPage" Content="1"  Width="40" HorizontalContentAlignment="Center" Margin="10,0,10,0"/>
                 <Button x:Name="btn_nextPage" Content="Suivante"   Width="130" Click="Btn_nextPage_Click" Margin="10,0,10,0"/>
                 <Button x:Name="btn_lastPage" Content="Dernière" Width="130" Click="Btn_lastPage_Click" Margin="10,0,10,0"/>

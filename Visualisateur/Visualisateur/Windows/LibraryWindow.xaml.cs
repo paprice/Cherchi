@@ -31,6 +31,8 @@ namespace Visualisateur.Windows
 
         private VideosSee see;
 
+        private bool notSeen;
+
         public LibraryWindow(User u, string up)
         {
             InitializeComponent();
@@ -48,7 +50,6 @@ namespace Visualisateur.Windows
 
             usersPath = up;
 
-
             txt_currentPath.Text = path;
 
             this.Title = "Librairie de " + user.GetName();
@@ -61,15 +62,12 @@ namespace Visualisateur.Windows
             see = new VideosSee(user.GetPath());
             sees = see.ListSeeVideo();
 
-            CreateList("");
+            CreateList();
             PrintList();
         }
 
-        private VideoTemplate CreateButton(Bitmap bit, int count, string fileName, string path)
+        private VideoTemplate CreateButton(Bitmap bit, string fileName, string path)
         {
-            int col = count % 5;
-            int row = count / 5;
-
             VideoTemplate vt = new VideoTemplate(GetImage(bit), fileName, path)
             {
                 Height = 175
@@ -81,7 +79,7 @@ namespace Visualisateur.Windows
             }
             else
             {
-               vt.name.Background = System.Windows.Media.Brushes.LightGreen;
+                vt.name.Background = System.Windows.Media.Brushes.LightGreen;
             }
 
             vt.MouseUp += Tb_Click;
@@ -92,7 +90,7 @@ namespace Visualisateur.Windows
             return vt;
         }
 
-        private void CreateList(string filters)
+        private void CreateList(string filters = "", string folder = "")
         {
             using (new WaitCursor())
             {
@@ -100,26 +98,59 @@ namespace Visualisateur.Windows
 
                 DirectoryInfo dirInfo = new DirectoryInfo(path);
 
-                FileInfo[] fi = dirInfo.GetFiles("*"+filters+"*.*", SearchOption.AllDirectories);
-
-                foreach (FileInfo f in fi)
+                if (folder == "")
                 {
-                    /*
-                     if (f.Extension.Equals(".avi") || f.Extension.Equals(".mkv") || f.Extension.Equals(".mp4"))
-                         filesInfo.Add(f);*/
-                    var contentType = MimeTypes.GetContentType(f.FullName);
-                    if (contentType.StartsWith("video"))
+
+                    FileInfo[] fi = dirInfo.GetFiles("*" + filters + "*.*", SearchOption.AllDirectories);
+
+                    foreach (FileInfo f in fi)
                     {
-                        filesInfo.Add(f);
+                        var contentType = MimeTypes.GetContentType(f.FullName);
+                        if (contentType.StartsWith("video"))
+                        {
+                            filesInfo.Add(f);
+                        }
                     }
+
+                    Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
+                    {
+                        return String.Compare(a.Name, b.Name);
+                    });
+
+                    filesInfo.Sort(comparison);
                 }
-
-                Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
+                else
                 {
-                    return String.Compare(a.Name, b.Name);
-                });
+                    DirectoryInfo[] dirs = dirInfo.GetDirectories("*", SearchOption.AllDirectories);
 
-                filesInfo.Sort(comparison);
+                    foreach (DirectoryInfo d in dirs)
+                    {
+                        if (d.Name.ToLower().Contains(folder.ToLower()))
+                        {
+                            FileInfo[] fi = d.GetFiles("*" + filters + "*.*", SearchOption.AllDirectories);
+
+                            foreach (FileInfo f in fi)
+                            {
+                                var contentType = MimeTypes.GetContentType(f.FullName);
+                                if (contentType.StartsWith("video"))
+                                {
+                                    filesInfo.Add(f);
+                                }
+                            }
+
+                            Comparison<FileInfo> comparison = new Comparison<FileInfo>(delegate (FileInfo a, FileInfo b)
+                            {
+                                return String.Compare(a.Name, b.Name);
+                            });
+
+                            filesInfo.Sort(comparison);
+                        }
+                    }
+
+
+
+
+                }
             }
         }
 
@@ -129,22 +160,28 @@ namespace Visualisateur.Windows
             {
                 RemoveVideos();
                 int count = 0;
-                for (int i = firstIndex; i < firstIndex + 20; i++)
+                for (int i = firstIndex; count < 20; i++)
                 {
                     if (i < filesInfo.Count)
                     {
                         FileInfo files = filesInfo[i];
+
 
                         ShellFile shellFile = ShellFile.FromFilePath(files.FullName);
                         Bitmap shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
 
                         shellFile.Dispose();
 
-                        //Video v = new Video(files.FullName, files.Name);
-                        //videos.Add(v);
-
-                        videos.Add(CreateButton(shellThumb, count, files.Name, files.FullName));
-                        count++;
+                        if (notSeen && !sees.Contains(files.Name))
+                        {
+                            videos.Add(CreateButton(shellThumb, files.Name, files.FullName));
+                            count++;
+                        }
+                        else if (!notSeen)
+                        {
+                            videos.Add(CreateButton(shellThumb, files.Name, files.FullName));
+                            count++;
+                        }
                     }
                     else
                     {
@@ -205,7 +242,6 @@ namespace Visualisateur.Windows
             foreach (VideoTemplate v in videos)
             {
                 wrap.Children.Remove(v);
-                //main.Children.Remove(v.TextBlock);
             }
             videos.RemoveRange(0, videos.Count);
 
@@ -216,7 +252,7 @@ namespace Visualisateur.Windows
 
             if (firstIndex >= 20)
             {
-                ChangePage(currentPage-1);
+                ChangePage(currentPage - 1);
                 PrintList();
             }
 
@@ -241,7 +277,7 @@ namespace Visualisateur.Windows
         {
             if (filesInfo.Count > firstIndex + 20)
             {
-                ChangePage(currentPage+1);
+                ChangePage(currentPage + 1);
                 PrintList();
             }
         }
@@ -252,7 +288,7 @@ namespace Visualisateur.Windows
             if (t != 0)
             {
                 int i = (filesInfo.Count / 20);
-                ChangePage(i+1);
+                ChangePage(i + 1);
                 PrintList();
             }
         }
@@ -263,7 +299,7 @@ namespace Visualisateur.Windows
             txt_newPath.Text = "";
             path = txt_currentPath.Text;
             ChangePage(1);
-            CreateList("");
+            CreateList();
             PrintList();
 
             if (chk_lastPath.IsChecked.Value)
@@ -275,6 +311,8 @@ namespace Visualisateur.Windows
                 userList.Add(u);
                 User.WriteXmlUser(userList, usersPath);
             }
+
+            tb_settings.IsChecked = false;
         }
 
         private void CheckRepository_Click(object sender, RoutedEventArgs e)
@@ -291,7 +329,7 @@ namespace Visualisateur.Windows
 
         private void Btn_NameSearch_Click(object sender, RoutedEventArgs e)
         {
-            if(txt_NameSearch.Text != "")
+            if (txt_NameSearch.Text != "")
             {
                 ChangePage(1);
                 CreateList(txt_NameSearch.Text);
@@ -304,10 +342,38 @@ namespace Visualisateur.Windows
         private void Btn_NoFilter_Click(object sender, RoutedEventArgs e)
         {
             ChangePage(1);
-            CreateList("");
+            CreateList();
             PrintList();
             txt_NameSearch.Text = "";
             tb_filters.IsChecked = false;
+        }
+
+        private void Btn_SeriesSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if (txt_SerieSearch.Text != "")
+            {
+                txt_NameSearch.Text = "";
+                tb_filters.IsChecked = false;
+                CreateList("", txt_SerieSearch.Text);
+                PrintList();
+            }
+        }
+
+
+
+        private void Chk_NotSeen_Checked(object sender, RoutedEventArgs e)
+        {
+            notSeen = true;
+            tb_filters.IsChecked = false;
+            PrintList();
+        }
+
+        private void Chk_OnlySeen_Unchecked(object sender, RoutedEventArgs e)
+        {
+            notSeen = false;
+            tb_filters.IsChecked = false;
+            chk_NotSeen.IsChecked = false;
+            PrintList();
         }
     }
 }
